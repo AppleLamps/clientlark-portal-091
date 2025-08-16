@@ -1,6 +1,7 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, NavLink, Navigate } from "react-router-dom";
 import { Home, FileText, Bell, LogOut } from "lucide-react";
 import Invoices from "./Invoices";
+import InvoiceDetails from "./InvoiceDetails";
 import Updates from "./Updates";
 
 const Sidebar = () => (
@@ -9,22 +10,37 @@ const Sidebar = () => (
     <nav>
       <ul>
         <li className="mb-2">
-          <Link to="/user" className="flex items-center p-2 rounded hover:bg-gray-200">
+          <NavLink 
+            to="/user/invoices" 
+            className={({ isActive }) => 
+              "flex items-center p-2 rounded hover:bg-gray-200 " + 
+              (isActive ? "bg-gray-200 font-medium" : "")
+            }
+          >
             <FileText className="h-4 w-4 mr-2" />
             <span>Invoices</span>
-          </Link>
+          </NavLink>
         </li>
         <li className="mb-2">
-          <Link to="/user/updates" className="flex items-center p-2 rounded hover:bg-gray-200">
+          <NavLink 
+            to="/user/updates" 
+            className={({ isActive }) => 
+              "flex items-center p-2 rounded hover:bg-gray-200 " + 
+              (isActive ? "bg-gray-200 font-medium" : "")
+            }
+          >
             <Bell className="h-4 w-4 mr-2" />
             <span>Updates</span>
-          </Link>
+          </NavLink>
         </li>
         <li className="mb-2">
-          <Link to="/" className="flex items-center p-2 rounded hover:bg-gray-200">
+          <NavLink 
+            to="/" 
+            className="flex items-center p-2 rounded hover:bg-gray-200"
+          >
             <LogOut className="h-4 w-4 mr-2" />
             <span>Logout</span>
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </nav>
@@ -36,7 +52,9 @@ const UserDashboard = () => (
     <Sidebar />
     <main className="flex-1 p-6">
       <Routes>
-        <Route index element={<Invoices />} />
+        <Route index element={<Navigate to="invoices" replace />} />
+        <Route path="invoices" element={<Invoices />} />
+        <Route path="invoices/:id" element={<InvoiceDetails />} />
         <Route path="updates" element={<Updates />} />
       </Routes>
     </main>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -53,36 +53,44 @@ const Invoices = () => {
       <div className="mb-4">
         <Input placeholder="Search invoices..." className="max-w-sm" />
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Invoice ID</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredInvoices.map((invoice) => (
-            <TableRow key={invoice.id}>
-              <TableCell>{invoice.id}</TableCell>
-              <TableCell>${invoice.amount}</TableCell>
-              <TableCell>
-                <Badge variant={getStatusBadgeVariant(invoice.status)}>
-                  {invoice.status}
-                </Badge>
-              </TableCell>
-              <TableCell>{invoice.date}</TableCell>
-              <TableCell>
-                <Button variant="outline" size="sm">
-                  View Details
-                </Button>
-              </TableCell>
+{filteredInvoices.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-lg">
+            You have no invoices yet. We'll notify you when your first one is ready!
+          </p>
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Invoice ID</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredInvoices.map((invoice) => (
+              <TableRow key={invoice.id}>
+                <TableCell>{invoice.id}</TableCell>
+                <TableCell>${invoice.amount}</TableCell>
+                <TableCell>
+                  <Badge variant={getStatusBadgeVariant(invoice.status)}>
+                    {invoice.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>{invoice.date}</TableCell>
+                <TableCell>
+                  <Button asChild variant="outline" size="sm">
+                    <Link to={`/user/invoices/${invoice.id}`}>View Details</Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 };

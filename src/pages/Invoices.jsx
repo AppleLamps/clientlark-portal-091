@@ -17,9 +17,16 @@ const Invoices = () => {
   const statusFilter = searchParams.get('status');
   
   const [invoices, setInvoices] = useState([
-    { id: 1, amount: 1000, status: "Paid", date: "2023-03-01" },
-    { id: 2, amount: 1500, status: "Pending", date: "2023-03-15" },
-    { id: 3, amount: 800, status: "Overdue", date: "2023-02-28" },
+    { id: 1234, amount: 2500, status: "Paid", date: "2023-03-01" },
+    { id: 1235, amount: 1500, status: "Pending", date: "2023-03-15" },
+    { id: 1236, amount: 800, status: "Overdue", date: "2023-02-28" },
+    { id: 5678, amount: 3200, status: "Pending", date: "2023-03-20" },
+    { id: 9012, amount: 950, status: "Paid", date: "2023-03-05" },
+    { id: 3456, amount: 4100, status: "Overdue", date: "2023-02-15" },
+    { id: 7890, amount: 1750, status: "Paid", date: "2023-03-10" },
+    { id: 2468, amount: 890, status: "Pending", date: "2023-03-22" },
+    { id: 1357, amount: 2200, status: "Overdue", date: "2023-02-20" },
+    { id: 8642, amount: 1680, status: "Paid", date: "2023-03-12" },
   ]);
 
   const [filteredInvoices, setFilteredInvoices] = useState(invoices);

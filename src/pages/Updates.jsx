@@ -7,6 +7,12 @@ const Updates = () => {
     { id: 1, content: "Your invoice #1234 has been paid", date: "2023-03-01" },
     { id: 2, content: "New feature: You can now download invoice PDFs", date: "2023-02-28" },
     { id: 3, content: "Reminder: Invoice #5678 is due next week", date: "2023-02-25" },
+    { id: 4, content: "Payment received for invoice #9012 - thank you!", date: "2023-03-05" },
+    { id: 5, content: "Invoice #3456 is now overdue. Please contact us if you need assistance.", date: "2023-02-20" },
+    { id: 6, content: "Your invoice #7890 has been successfully processed", date: "2023-03-10" },
+    { id: 7, content: "Scheduled maintenance: Our billing system will be offline from 2-4 AM EST", date: "2023-03-18" },
+    { id: 8, content: "Invoice #1357 payment is overdue. Late fees may apply.", date: "2023-02-22" },
+    { id: 9, content: "New invoice #2468 has been generated and sent to your email", date: "2023-03-22" },
   ]);
 
   const renderContent = (text) => {

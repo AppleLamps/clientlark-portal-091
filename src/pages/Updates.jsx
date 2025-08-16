@@ -1,64 +1,145 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Bell, CheckCircle, AlertTriangle, DollarSign, Wrench, FileText, Clock } from "lucide-react";
+import { updates as mockUpdates } from "@/data/mock";
 
 const Updates = () => {
-  const [updates, setUpdates] = useState([
-    { id: 1, content: "Your invoice #1234 has been paid", date: "2023-03-01" },
-    { id: 2, content: "New feature: You can now download invoice PDFs", date: "2023-02-28" },
-    { id: 3, content: "Reminder: Invoice #5678 is due next week", date: "2023-02-25" },
-    { id: 4, content: "Payment received for invoice #9012 - thank you!", date: "2023-03-05" },
-    { id: 5, content: "Invoice #3456 is now overdue. Please contact us if you need assistance.", date: "2023-02-20" },
-    { id: 6, content: "Your invoice #7890 has been successfully processed", date: "2023-03-10" },
-    { id: 7, content: "Scheduled maintenance: Our billing system will be offline from 2-4 AM EST", date: "2023-03-18" },
-    { id: 8, content: "Invoice #1357 payment is overdue. Late fees may apply.", date: "2023-02-22" },
-    { id: 9, content: "New invoice #2468 has been generated and sent to your email", date: "2023-03-22" },
-  ]);
+  const [updates, setUpdates] = useState(mockUpdates);
+
+  const markAllAsRead = () => {
+    setUpdates(updates.map(update => ({ ...update, read: true })));
+  };
+
+  const markAsRead = (id) => {
+    setUpdates(updates.map(update => 
+      update.id === id ? { ...update, read: true } : update
+    ));
+  };
+
+  const unreadCount = updates.filter(update => !update.read).length;
+
+  const getUpdateIcon = (type) => {
+    switch (type) {
+      case 'payment':
+        return <DollarSign className="h-4 w-4 text-success" />;
+      case 'overdue':
+        return <AlertTriangle className="h-4 w-4 text-destructive" />;
+      case 'reminder':
+        return <Clock className="h-4 w-4 text-warning" />;
+      case 'invoice':
+        return <FileText className="h-4 w-4 text-primary" />;
+      case 'maintenance':
+        return <Wrench className="h-4 w-4 text-muted-foreground" />;
+      case 'feature':
+        return <Bell className="h-4 w-4 text-primary" />;
+      default:
+        return <Bell className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
 
   const renderContent = (text) => {
-    const regex = /invoice\s+#(\d+)/gi;
-    const parts = [];
-    let lastIndex = 0;
-    let match;
+    const invoiceRegex = /#(\d+)/g;
+    const parts = text.split(invoiceRegex);
     
-    while ((match = regex.exec(text)) !== null) {
-      parts.push(text.slice(lastIndex, match.index));
-      const id = match[1];
-      parts.push(
-        <Link 
-          key={match.index} 
-          to={`/user/invoices/${id}`} 
-          className="text-blue-600 hover:underline"
-        >
-          {`invoice #${id}`}
-        </Link>
-      );
-      lastIndex = regex.lastIndex;
-    }
-    parts.push(text.slice(lastIndex));
-    return parts;
+    return parts.map((part, index) => {
+      if (invoiceRegex.test(`#${part}`) && !isNaN(part)) {
+        return (
+          <Link 
+            key={index} 
+            to={`/user/invoices/${part}`} 
+            className="text-primary hover:underline font-medium"
+          >
+            #{part}
+          </Link>
+        );
+      }
+      return part;
+    });
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Your Updates</h1>
-      {updates.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">
-            You're all caught up. We'll notify you when there's something new.
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Your Updates</h1>
+          <p className="text-muted-foreground mt-2">
+            Stay informed about your invoices and account activity
           </p>
         </div>
+        {unreadCount > 0 && (
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary">
+              {unreadCount} unread
+            </Badge>
+            <Button variant="outline" size="sm" onClick={markAllAsRead}>
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Mark all as read
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {updates.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Bell className="h-12 w-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No updates yet</h3>
+            <p className="text-muted-foreground text-center max-w-sm">
+              We'll keep you informed about important changes to your invoices and account!
+            </p>
+          </CardContent>
+        </Card>
       ) : (
-        <div>
-          {updates.map((update) => (
-            <Card key={update.id} className="mb-4">
-              <CardHeader>
-                <CardTitle>{update.date}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p>{renderContent(update.content)}</p>
-              </CardContent>
-            </Card>
+        <div className="space-y-4">
+          {updates.map((update, index) => (
+            <div key={update.id} className="relative">
+              {index < updates.length - 1 && (
+                <div className="absolute left-6 top-16 w-px h-6 bg-border" />
+              )}
+              
+              <Card 
+                className={`transition-all hover:shadow-md ${
+                  !update.read ? 'ring-2 ring-primary/20 bg-primary/5' : ''
+                }`}
+                onClick={() => !update.read && markAsRead(update.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex gap-4">
+                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
+                      !update.read ? 'bg-primary/10' : 'bg-muted'
+                    }`}>
+                      {getUpdateIcon(update.type)}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge 
+                          variant={update.type === 'overdue' ? 'destructive' : 
+                                 update.type === 'payment' ? 'success' : 
+                                 update.type === 'reminder' ? 'warning' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {update.type?.charAt(0).toUpperCase() + update.type?.slice(1) || 'Update'}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(update.date).toLocaleDateString()}
+                        </span>
+                        {!update.read && (
+                          <div className="w-2 h-2 bg-primary rounded-full" />
+                        )}
+                      </div>
+                      
+                      <p className={`${!update.read ? 'font-medium' : ''}`}>
+                        {renderContent(update.content)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
       )}

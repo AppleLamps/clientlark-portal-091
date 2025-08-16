@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -11,11 +13,39 @@ import {
 } from "@/components/ui/table";
 
 const Invoices = () => {
+  const [searchParams] = useSearchParams();
+  const statusFilter = searchParams.get('status');
+  
   const [invoices, setInvoices] = useState([
     { id: 1, amount: 1000, status: "Paid", date: "2023-03-01" },
     { id: 2, amount: 1500, status: "Pending", date: "2023-03-15" },
     { id: 3, amount: 800, status: "Overdue", date: "2023-02-28" },
   ]);
+
+  const [filteredInvoices, setFilteredInvoices] = useState(invoices);
+
+  useEffect(() => {
+    if (statusFilter) {
+      setFilteredInvoices(invoices.filter(invoice => 
+        invoice.status.toLowerCase() === statusFilter.toLowerCase()
+      ));
+    } else {
+      setFilteredInvoices(invoices);
+    }
+  }, [statusFilter, invoices]);
+
+  const getStatusBadgeVariant = (status) => {
+    switch (status.toLowerCase()) {
+      case "paid":
+        return "success";
+      case "pending":
+        return "warning";
+      case "overdue":
+        return "destructive";
+      default:
+        return "default";
+    }
+  };
 
   return (
     <div>
@@ -34,11 +64,15 @@ const Invoices = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
+          {filteredInvoices.map((invoice) => (
             <TableRow key={invoice.id}>
               <TableCell>{invoice.id}</TableCell>
               <TableCell>${invoice.amount}</TableCell>
-              <TableCell>{invoice.status}</TableCell>
+              <TableCell>
+                <Badge variant={getStatusBadgeVariant(invoice.status)}>
+                  {invoice.status}
+                </Badge>
+              </TableCell>
               <TableCell>{invoice.date}</TableCell>
               <TableCell>
                 <Button variant="outline" size="sm">

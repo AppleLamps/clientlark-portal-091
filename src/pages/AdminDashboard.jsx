@@ -3,6 +3,8 @@ import { Home, FileText, Users, LogOut } from "lucide-react";
 import Dashboard from "./Dashboard";
 import Customers from "./Customers";
 import CreateInvoice from "./CreateInvoice";
+import Invoices from "./Invoices";
+import Updates from "./Updates";
 
 const Sidebar = () => (
   <div className="bg-gray-100 w-64 min-h-screen p-4">
@@ -46,6 +48,8 @@ const AdminDashboard = () => (
         <Route index element={<Dashboard />} />
         <Route path="customers" element={<Customers />} />
         <Route path="create-invoice" element={<CreateInvoice />} />
+        <Route path="invoices" element={<Invoices />} />
+        <Route path="updates" element={<Updates />} />
       </Routes>
     </main>
   </div>
